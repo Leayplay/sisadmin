@@ -1,0 +1,211 @@
+ISP
+
+hostnamectl set-hostname isp.au-team.irpo
+iptables -t nat -L
+iptables –t nat –A POSTROUTING –o ens3 –j MASQUERADE
+iptables-save » /etc/sysconfig/iptables
+systemctl enable —now iptables
+
+
+HQ-RTR
+
+en
+conf t
+hostname HQ-RTR
+ip domain-name au-team.irpo
+interface tunnel.0
+ip address 10.10.10.1/30
+ip tunnel 172.16.1.2 172.16.2.2 mode gre
+exit
+ip route 0.0.0.0 0.0.0.0 172.16.1.1
+router ospf 0
+network 10.10.100.0/27 area 0
+network 10.10.200.0/28 area 0
+network 10.10.30.0/29 area 0
+network 10.10.10.0/30 area 0
+passive-interface default
+no passive-interface tunnel.0
+area 0 authentication
+exit
+interface tunnel.0
+ip ospf authentification message-digest
+ip ospf message-digest-key 1 md5 P@ssw0rd
+exit
+interface isp
+ip nat outside
+exit
+interface vl100
+ip nat inside
+exit
+interface vl200
+ip nat inside
+exit
+interface vl999
+ip nat inside
+exit
+ip nat pool HQ 10.10.0.1-10.10.200.254
+ip nat source dynamic inside-to-outside pool HQ overload interface isp
+end
+write memory
+ntp timezone utc+3
+
+
+BR-RTR
+
+en
+conf t
+hostname BR-RTR
+ip domain-name au-team.irpo
+interface tunnel.0
+ip address 10.10.10.2/30
+ip tunnel 172.16.2.2 172.16.1.2 mode gre
+exit
+ip route 0.0.0.0 0.0.0.0 172.16.2.1
+router ospf 0
+network 10.20.10.0/30 area 0
+network 10.10.10.0/30 area 0
+passive-interface default
+no passive-interface tunnel.0
+no passive-interface fw
+area 0 authentication
+exit
+interface tunnel.0
+ip ospf authentification message-digest
+ip ospf message-digest-key 1 md5 P@ssw0rd
+exit
+interface fw
+ip ospf authentification message-digest
+ip ospf message-digest-key 1 md5 P@ssw0rd
+exit
+interface isp
+ip nat outside
+exit
+interface fw
+ip nat inside
+exit
+ip nat pool BR 10.0.0.1-10.254.254.254
+ip nat source dynamic inside-to-outside pool BR overload interface isp
+ntp timezone utc+3
+
+
+HQ-SW
+
+hostnamectl set-hostname hq-sw.au-team.irpo
+
+
+HQ-SRV
+
+hostnamectl set-hostname hq-srv.au-team.irpo
+
+
+vim /etc/net/ifaces/ens3/ipv4address
+вписать: 10.10.100.2/27
+
+vim /etc/net/ifaces/ens3/ipv4route
+вписать: default via 10.10.100.1
+
+vim /etc/net/ifaces/ens3/resolv.conf
+вписать (ниже):
+search au-team.irpo
+nameserver 77..88.8.8
+namesrver 127.0.0.1
+
+systemctl restart network
+
+vim +123 /etc/sudoers
+WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL (РАСКОМЕНТИРОВАТЬ СТРОКУ)
+
+vim /etc/openssh/sshd_config
+вписать: Banner /etc/openssh/banner
+
+vim /etc/openssh/banner
+вписать: Authorized access only
+
+systemctl restart sshd
+
+vim /etc/bind/zone/10.10.in-addr.arpa
+исправить на au-team.irpo. root.au-team.irpo.
+
+vim /etc/bind/options.conf
+вписать (ниже):
+listen-on { 10.10.100.2; };
+listen-on-v6 { none; };
+forwarders { 77.88.8.8; };
+allow-qurey { any; };
+
+systemctl enable —now bind.service
+
+
+HQ-CLI
+
+hostnamectl set-hostname hq-cli.au-team.irpo
+
+
+BR-CLI
+
+hostnamectl set-hostname br-cli.au-team.irpo
+mv /etc/net/ifaces/ens18 /etc/net/ifaces/ens3
+
+vim /etc/net/ifaces/ens3/ipv4address
+внести: 10.20.30.2/29
+
+vim /etc/net/ifaces/ens3/ipv4route
+внести: default via 10.20.30.1
+
+vim /etc/net/ifaces/ens3/resolv.conf
+внести: search au-team.irpo
+nameserver 10.10.100.2
+
+systemctl restart network
+reboot
+
+
+
+BR-SRV
+
+hostnamectl set-hostname br-srv.au-team.irpo
+
+vim /etc/net/ifaces/ens3/ipv4address
+внести 10.20.20.2/28
+
+vim /etc/net/ifaces/ens3/ipv4route
+внести default via 10.20.20.1
+
+vim /etc/net/ifaces/ens3/resolv.conf
+внести (ниже):
+search au-team.irpo
+nameserver 10.10.100.2
+
+systemctl restart network
+
+vim +123 /etc/sudoers
+WHEEL_USERS ALL=(ALL:ALL) NOPASSWD: ALL (РАСКОМЕНТИРОВАТЬ СТРОКУ)
+
+vim /etc/openssh/sshd_config
+вписать: Banner /etc/openssh/banner
+
+vim /etc/openssh/banner
+вписать: Authorized access only
+
+systemctl restart sshd
+
+BR-FW
+В брауезере br cli вбить 10.20.30.1:8443
+логин пароль
+Admin IdecoP@ssw0rd
+управление сервером > терминал
+hostnamectl set-hostname br-fw.au-team.irpo
+выйти
+марушрутизация > ospf > основные
+md5
+key id 1
+пароль P@ssw0rd
+сохр
+
+локльаные интерфейсы > добавить
+интерфейс oif0
+область 0
+тип обл Normal
+стоимость 1
+добавить
+OSPF кнопка над основные включить
