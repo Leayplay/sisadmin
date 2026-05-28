@@ -1,4 +1,4 @@
-ISP
+ISP__________________________________________________
 
 hostnamectl set-hostname isp.au-team.irpo
 
@@ -11,7 +11,7 @@ iptables-save » /etc/sysconfig/iptables
 systemctl enable —now iptables
 
 
-HQ-RTR
+HQ-RTR______________________________________________
 
 en
 
@@ -162,12 +162,12 @@ ip nat source dynamic inside-to-outside pool BR overload interface isp
 ntp timezone utc+3
 
 
-HQ-SW
+HQ-SW__________________________________________________
 
 hostnamectl set-hostname hq-sw.au-team.irpo
 
 
-HQ-SRV
+HQ-SRV____________________________________________________
 
 hostnamectl set-hostname hq-srv.au-team.irpo
 
@@ -225,12 +225,12 @@ allow-qurey { any; };
 systemctl enable —now bind.service
 
 
-HQ-CLI
+HQ-CLI____________________________________________________
 
 hostnamectl set-hostname hq-cli.au-team.irpo
 
 
-BR-CLI
+BR-CLI____________________________________________________
 
 hostnamectl set-hostname br-cli.au-team.irpo
 
@@ -255,7 +255,7 @@ systemctl restart network
 
 reboot
 
-BR-SRV
+BR-SRV______________________________________________________________
 
 hostnamectl set-hostname br-srv.au-team.irpo
 
@@ -291,7 +291,7 @@ vim /etc/openssh/banner
 
 systemctl restart sshd
 
-BR-FW
+BR-FW________________________________________________
 
 В брауезере br cli вбить 10.20.30.1:8443
 
