@@ -6,7 +6,6 @@ iptables –t nat –A POSTROUTING –o ens3 –j MASQUERADE
 iptables-save » /etc/sysconfig/iptables
 systemctl enable —now iptables
 
-
 HQ-RTR
 
 en
