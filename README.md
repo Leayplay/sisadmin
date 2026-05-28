@@ -91,7 +91,7 @@ write memory
 
 ntp timezone utc+3
 
-BR-RTR
+BR-RTR____________________________________________________
 
 en
 
