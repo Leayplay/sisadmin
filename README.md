@@ -1,7 +1,7 @@
 ISP
 
 hostnamectl set-hostname isp.au-team.irpo
-iptables -t nat -L
+ iptables -t nat -L
 iptables –t nat –A POSTROUTING –o ens3 –j MASQUERADE
 iptables-save » /etc/sysconfig/iptables
 systemctl enable —now iptables
