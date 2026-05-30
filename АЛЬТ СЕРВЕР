@@ -11,10 +11,10 @@ done
 for i in {1..5};
 do
 samba-tool user add bruser$i P@ssw0rd;
-samba-tool user setexpiry bruser$i —noexpiry;
+samba-tool user setexpiry bruser$i --noexpiry;
 samba-tool group addmembers "br" bruser$i;
 done
-vim +47 /etc/chrony.conf
+vim /etc/chrony.conf
 pool 172.16.1.1 iburst заместо того что написано
 systemctl restart chronyd
 ansible all –m ping
@@ -83,6 +83,7 @@ systemctl restart chronyd
 ЦУС - пароль toor - аутентификация - применить - Administrator P@ssw0rd - ок (если не вошел в домен то повторить) - ок
 
 в tty Ctrl+Alt+F2 либо в терминал
+roleadd hq wheel
 vim /etc/sudoers
 внести
 Cmnd_Alias DE = /bin/cat, /bin/grep, /usr/bin/id
@@ -95,7 +96,7 @@ reboot
 sudo id sudo grep sudo cat
 
 BR-CLI________________________________________________________________
-im /etc/chrony.conf
+vim +47 /etc/chrony.conf
 изменить на pool 172.16.1.1 iburst
 systemctl restart chronyd
 затем в терминал
