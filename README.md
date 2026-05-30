@@ -3,3 +3,8 @@ https://www.altlinux.org/Настройка_сети
 https://docs.altlinux.org/ru-RU/archive/2.4/html-single/master/alt-docs-master/ch06s13.html
 https://redos.red-soft.ru/base/redos-7_3/7_3-administation/7_3-timedate/7_3-chrony/
 https://cloud.ru/blog/nastroyka-ntp
+[МАТЧАСТЬ.docx](https://github.com/user-attachments/files/28425839/default.docx)
+[МАТЧАСТЬ 3.docx](https://github.com/user-attachments/files/28425838/3.docx)
+[МАТЧАСТЬ 2.docx](https://github.com/user-attachments/files/28425837/2.docx)
+[БАЗОВЫЕ КОМАНДЫ LINUX.docx](https://github.com/user-attachments/files/28425836/LINUX.docx)
+[ЧЕРНОВИК.docx](https://github.com/user-attachments/files/28425835/default.docx)
