@@ -186,7 +186,7 @@ vim /etc/net/ifaces/ens3/resolv.conf
 
 search au-team.irpo
 
-nameserver 77..88.8.8
+nameserver 77.88.8.8
 
 namesrver 127.0.0.1
 
