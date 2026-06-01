@@ -1,4 +1,4 @@
-BR-SRV__________________________________________________
+* BR-SRV__________________________________________________
 samba-tool group add hq
 samba-tool group add br
 for i in {1..5};
@@ -15,7 +15,8 @@ samba-tool user setexpiry bruser$i --noexpiry;
 samba-tool group addmembers "br" bruser$i;
 done
 vim /etc/chrony.conf
-pool 172.16.1.1 iburst заместо того что написано
+pool 172.16.1.1 iburst (заместо того что написано)
+
 systemctl restart chronyd
 ansible all –m ping
 vim /etc/ansible/hosts
@@ -32,7 +33,7 @@ be-cli ansible_host=10.20.30.2 ansible_port=22 ansible_ssh_user=root ansible_ssh
 ребут все устройства и через 1 мин
 ansible all –m ping
 
-HQ-SRV______________________________________________________
+* HQ-SRV______________________________________________________
 ls /var/www/html
 mount /dev/sr0 /mnt
 cp /mnt/web/index.php /var/www/html/
@@ -55,50 +56,53 @@ mariadb –u webc –p –D webdb < /mnt/web/dump.sql
 systemctl restart mariadb
 systemctl restart httpd2
 
-ISP_________________________________________________________________
+* ISP_________________________________________________________________
 apt-get update
 apt-get install apache2-htpasswd –y
 htpasswd -c /etc/nginx/.htpasswd WEB
 установить пароль P@ssw0rd
 
-BR-RTR___________________________________________________________
+* BR-RTR___________________________________________________________
 en
 conf t
 ntp server 172.16.1.1
 end
 write memory
 
-HQ-RTR______________________________________________
+* HQ-RTR______________________________________________
 en
 conf t
 ntp server 172.16.1.1
 end
 write memory
 
-HQ-CLI__________________________________________________________
+* HQ-CLI__________________________________________________________
 vim +47 /etc/chrony.conf
-изменить на pool 172.16.1.1 iburst
+изменить на: pool 172.16.1.1 iburst
+
 systemctl restart chronyd
 
-ЦУС - пароль toor - аутентификация - применить - Administrator P@ssw0rd - ок (если не вошел в домен то повторить) - ок
+Центр Управления системой > пароль toor > аутентификация > применить > Administrator P@ssw0rd > OK (если не вошел в домен то повторить) > OK
 
-в tty Ctrl+Alt+F2 либо в терминал
+в tty Ctrl+Alt+F2 либо в терминал:
 roleadd hq wheel
 vim /etc/sudoers
-внести
+внести:
 Cmnd_Alias DE = /bin/cat, /bin/grep, /usr/bin/id
 
 WHEEL_USERS ALL=(ALL:ALL) DE
+
 сохранить и перезагрузить устройство
 reboot
 после залогиниться hquser1 P@ssw0rd
 должны работать
 sudo id sudo grep sudo cat
 
-BR-CLI________________________________________________________________
+* BR-CLI________________________________________________________________
 vim +47 /etc/chrony.conf
-изменить на pool 172.16.1.1 iburst
+изменить на: pool 172.16.1.1 iburst
+
 systemctl restart chronyd
 затем в терминал
-из по рута
+из под рута
 mount –av
