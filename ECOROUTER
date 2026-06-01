@@ -171,16 +171,17 @@ HQ-SRV____________________________________________________
 
 hostnamectl set-hostname hq-srv.au-team.irpo
 
-
 vim /etc/net/ifaces/ens3/ipv4address
 
 вписать: 10.10.100.2/27
 
 vim /etc/net/ifaces/ens3/ipv4route
 
+
 вписать: default via 10.10.100.1
 
 vim /etc/net/ifaces/ens3/resolv.conf
+
 
 вписать (ниже):
 
@@ -189,6 +190,7 @@ search au-team.irpo
 nameserver 77.88.8.8
 
 namesrver 127.0.0.1
+
 
 systemctl restart network
 
@@ -200,9 +202,11 @@ vim /etc/openssh/sshd_config
 
 вписать: Banner /etc/openssh/banner
 
+
 vim /etc/openssh/banner
 
 вписать: Authorized access only
+
 
 systemctl restart sshd
 
@@ -222,6 +226,7 @@ forwarders { 77.88.8.8; };
 
 allow-qurey { any; };
 
+
 systemctl enable —now bind.service
 
 
@@ -240,16 +245,18 @@ vim /etc/net/ifaces/ens3/ipv4address
 
 внести: 10.20.30.2/29
 
+
 vim /etc/net/ifaces/ens3/ipv4route
 
 внести: default via 10.20.30.1
 
 vim /etc/net/ifaces/ens3/resolv.conf
 
-внести: 
+внести (ниже): 
 search au-team.irpo
 
 nameserver 10.10.100.2
+
 
 systemctl restart network
 
@@ -263,9 +270,11 @@ vim /etc/net/ifaces/ens3/ipv4address
 
 внести 10.20.20.2/28
 
+
 vim /etc/net/ifaces/ens3/ipv4route
 
 внести default via 10.20.20.1
+
 
 vim /etc/net/ifaces/ens3/resolv.conf
 
@@ -274,6 +283,7 @@ vim /etc/net/ifaces/ens3/resolv.conf
 search au-team.irpo
 
 nameserver 10.10.100.2
+
 
 systemctl restart network
 
@@ -285,9 +295,11 @@ vim /etc/openssh/sshd_config
 
 вписать: Banner /etc/openssh/banner
 
+
 vim /etc/openssh/banner
 
 вписать: Authorized access only
+
 
 systemctl restart sshd
 
