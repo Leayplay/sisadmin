@@ -1,4 +1,4 @@
-* ISP__________________________________________________
+* ISP __________________________________________________
 
 hostnamectl set-hostname isp.au-team.irpo
 
@@ -11,7 +11,7 @@ iptables-save >> /etc/sysconfig/iptables
 systemctl enable --now iptables
 
 
-* HQ-RTR______________________________________________
+* HQ-RTR ______________________________________________
 
 en
 
@@ -85,13 +85,14 @@ ip nat pool HQ 10.10.0.1-10.10.200.254
 
 ip nat source dynamic inside-to-outside pool HQ overload interface isp
 
+ntp timezone utc+3
+
 end
 
 write memory
 
-ntp timezone utc+3
 
-* BR-RTR____________________________________________________
+* BR-RTR ____________________________________________________
 
 en
 
@@ -161,13 +162,17 @@ ip nat source dynamic inside-to-outside pool BR overload interface isp
 
 ntp timezone utc+3
 
+end
 
-* HQ-SW__________________________________________________
+write memory
+
+
+* HQ-SW __________________________________________________
 
 hostnamectl set-hostname hq-sw.au-team.irpo
 
 
-* HQ-SRV____________________________________________________
+* HQ-SRV ____________________________________________________
 
 hostnamectl set-hostname hq-srv.au-team.irpo
 
@@ -230,12 +235,12 @@ allow-qurey { any; };
 systemctl enable —now bind.service
 
 
-* HQ-CLI____________________________________________________
+* HQ-CLI ____________________________________________________
 
 hostnamectl set-hostname hq-cli.au-team.irpo
 
 
-* BR-CLI____________________________________________________
+* BR-CLI ____________________________________________________
 
 hostnamectl set-hostname br-cli.au-team.irpo
 
@@ -262,7 +267,7 @@ systemctl restart network
 
 reboot
 
-* BR-SRV______________________________________________________________
+* BR-SRV ______________________________________________________________
 
 hostnamectl set-hostname br-srv.au-team.irpo
 
@@ -303,7 +308,7 @@ vim /etc/openssh/banner
 
 systemctl restart sshd
 
-* BR-FW________________________________________________
+* BR-FW ________________________________________________
 
 В брауезере br-cli вбить: 10.20.30.1:8443
 
