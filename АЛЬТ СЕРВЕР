@@ -1,4 +1,4 @@
-* BR-SRV__________________________________________________
+* BR-SRV __________________________________________________
 samba-tool group add hq
 samba-tool group add br
 for i in {1..5};
@@ -33,7 +33,7 @@ be-cli ansible_host=10.20.30.2 ansible_port=22 ansible_ssh_user=root ansible_ssh
 Ребут все устройства и через 1 мин:
 ansible all –m ping
 
-* HQ-SRV______________________________________________________
+* HQ-SRV ______________________________________________________
 ls /var/www/html
 mount /dev/sr0 /mnt
 cp /mnt/web/index.php /var/www/html/
@@ -56,27 +56,27 @@ mariadb –u webc –p –D webdb < /mnt/web/dump.sql
 systemctl restart mariadb
 systemctl restart httpd2
 
-* ISP_________________________________________________________________
+* ISP _________________________________________________________________
 apt-get update
 apt-get install apache2-htpasswd –y
 htpasswd -c /etc/nginx/.htpasswd WEB
 Установить пароль: P@ssw0rd
 
-* BR-RTR___________________________________________________________
+* BR-RTR ___________________________________________________________
 en
 conf t
 ntp server 172.16.1.1
 end
 write memory
 
-* HQ-RTR______________________________________________
+* HQ-RTR ______________________________________________
 en
 conf t
 ntp server 172.16.1.1
 end
 write memory
 
-* HQ-CLI__________________________________________________________
+* HQ-CLI __________________________________________________________
 vim +47 /etc/chrony.conf
 Изменить на: pool 172.16.1.1 iburst
 
@@ -100,7 +100,7 @@ sudo id
 sudo grep 
 sudo cat
 
-* BR-CLI________________________________________________________________
+* BR-CLI ________________________________________________________________
 vim +47 /etc/chrony.conf
 Изменить на: pool 172.16.1.1 iburst
 
