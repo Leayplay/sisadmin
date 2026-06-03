@@ -1,0 +1,138 @@
+Разбор, пошаговая настройка мониторинга инфраструктуры с помощью Prometheus и Grafana — с пояснением команд и конфигураций.
+
+Шаг 1. Установка компонентов
+Команда:
+apt-get install -y grafana prometheus prometheus-node-exporter
+Где выполнять: на сервере, который будет центральным узлом мониторинга (далее — сервер мониторинга).
+Что делает: устанавливает три компонента:
+Grafana — веб‑интерфейс для визуализации метрик и дашбордов;
+Prometheus — система сбора и хранения метрик;
+node‑exporter — агент, собирающий метрики с хостов (CPU, память, диски, сеть и т. д.).
+Важно: в официальных репозиториях пакет называется prometheus (с «e» на конце), а не prometheus. Исправленная команда:
+apt-get install -y grafana prometheus prometheus-node-exporter
+
+Шаг 2. Настройка Prometheus
+Конфигурацию Prometheus нужно прописать в файле /etc/prometheus/prometheus.yml.
+Содержимое файла:
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['hq-srv:9100', 'br-srv:9100']
+Разбор конфигурации:
+global.scrape_interval — интервал сбора метрик (каждые 15 секунд);
+job_name — логическая группа целей для сбора метрик;
+targets — список хостов и портов, с которых собирать метрики:
+localhost:9090 — сам Prometheus (метрики о работе системы);
+hq-srv:9100, br-srv:9100 — хосты с запущенным node-exporter (порт 9100 по умолчанию).
+
+Шаг 3. Настройка node-exporter на целевых хостах
+На каждом хосте, который нужно мониторить (hq-srv, br-srv и т. д.), выполните:
+Установите node-exporter:
+apt-get install -y prometheus-node-exporter
+Запустите и включите автозагрузку:
+systemctl enable --now prometheus-node-exporter
+Откройте порт 9100 в брандмауэре:
+ufw allow 9100
+
+Шаг 4. Запуск служб
+Команды:
+systemctl enable --now grafana-server
+systemctl enable --now prometheus
+systemctl enable --now prometheus-node-exporter
+Где выполнять:
+Первые две команды — на сервере мониторинга;
+Последняя команда (node-exporter) — на каждом целевом хосте.
+Что делают команды:
+enable — добавляет службу в автозагрузку при старте системы;
+--now — сразу запускает службу.
+
+Шаг 5. Настройка брандмауэра
+На сервере мониторинга откройте порты:
+9090 — веб‑интерфейс Prometheus;
+3000 — веб‑интерфейс Grafana.
+Команды:
+ufw allow 9090
+ufw allow 3000
+
+Шаг 6. Настройка Grafana и подключение к Prometheus
+Откройте веб‑интерфейс Grafana: http://<IP-сервера-мониторинга>:3000.
+Логин и пароль по умолчанию: admin / admin (при первом входе потребуется сменить пароль).
+Перейдите в Configuration → Data Sources → Add data source.
+Выберите Prometheus.
+В поле URL укажите: http://localhost:9090.
+Нажмите Save & Test — должно появиться сообщение об успешном подключении.
+
+Шаг 7. Импорт дашбордов
+Для визуализации метрик можно импортировать готовые дашборды:
+В Grafana перейдите в Create → Import.
+Введите ID дашборда (например, 11074 — Node Exporter Full) или загрузите JSON‑файл.
+Выберите источник данных (Prometheus) и нажмите Import.
+Проверка работы
+Prometheus: откройте http://<IP>:9090/targets — все цели должны быть в статусе UP.
+node-exporter: проверьте метрики на хосте: curl http://localhost:9100/metrics.
+Grafana: откройте дашборд — графики должны отображать данные.
+Краткий итог: где что писать
+Этап
+Где выполнять
+Файл/команда
+Установка
+Сервер мониторинга
+apt-get install -y grafana prometheus prometheus-node-exporter
+Конфигурация Prometheus
+Сервер мониторинга
+/etc/prometheus/prometheus.yml
+Установка node-exporter
+Целевые хосты (hq-srv, br-srv)
+apt-get install -y prometheus-node-exporter
+Запуск служб
+Сервер мониторинга
+systemctl enable --now grafana-server prometheus
+Запуск node-exporter
+Целевые хосты
+systemctl enable --now prometheus-node-exporter
+Открытие портов
+Сервер мониторинга
+ufw allow 9090, ufw allow 3000
+Настройка брандмауэра
+Целевые хосты
+ufw allow 9100
+Возможные проблемы и решения
+Цели в Prometheus в статусе DOWN:
+проверьте, запущен ли node-exporter на целевых хостах: systemctl status prometheus-node-exporter;
+убедитесь, что порты открыты в брандмауэре;
+проверьте доступность хостов: ping hq-srv.
+Grafana не видит Prometheus:
+проверьте URL источника данных (http://localhost:9090);
+убедитесь, что Prometheus запущен: systemctl status prometheus.
+Нет данных на дашбордах:
+подождите 1–2 минуты — Prometheus должен успеть собрать метрики;
+проверьте правила сбора в prometheus.yml.
+
+Мониторинг инфраструктуры Prometheus и Grafana
+Команда настройки
+shell
+copy
+apt-get install -y grafana prometheus prometheus-node-exporter
+Команда настройки
+shell
+copy
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090', 'hq-srv:9100', 'br-srv:9100']
+Команда настройки
+shell
+copy
+systemctl enable --now grafana-server
+systemctl enable --now prometheus
+systemctl enable --now prometheus-node-exporter
